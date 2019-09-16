@@ -1,0 +1,28 @@
+{
+	"name": "evael",
+	"description": "Evael engine Entity-Component-System lib.",
+	"copyright": "Copyright 2015-2019, Robert Georges",
+	"license": "BSL-1.0",
+	"authors": ["Robert Georges"],
+	"version": "0.0.1",
+	"dependencies": {
+		"evael-lib": "0.0.1"
+	},
+	"configurations": [
+		{ 
+			"name": "executable",
+            "targetType": "executable",
+			"excludedSourceFiles": ["tests/main.d"]
+		},
+        {
+            "name": "unittest",
+            "targetType": "executable",
+			"excludedSourceFiles": ["source/app.d"],
+			"sourcePaths": ["tests"],
+            "dependencies": {
+                "unit-threaded": "*"
+            }
+        }
+	],
+	"dflags": ["-vgc"]
+}
