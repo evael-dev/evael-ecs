@@ -57,8 +57,8 @@ struct Entity
     
         this.m_em.killEntity(this.m_id);
         this.m_em = null;
-        // TODO
-        //this.m_id.isValid = false;
+
+        this.m_id.isValid = false;
     }
 
     /**
@@ -69,7 +69,7 @@ struct Entity
     {
         assert(this.m_em !is null);
 
-        this.m_em.activateEntity(this);
+        this.m_em.activateEntity(this.m_id);
     }
 
     /**

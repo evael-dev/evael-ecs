@@ -25,7 +25,6 @@ class EntityManager
     {
         this.m_components = Array!IComponentPool(COMPONENTS_POOL_SIZE);
         this.m_components.dispose();
-
     }
 
     @nogc
@@ -118,7 +117,7 @@ class EntityManager
 
     /**
      * Kills an entity.
-     * Systems are notified that the specified has been killed.
+     * World is notified that the specified has been killed.
      */
     @nogc
     public void killEntity(in ref Id id) nothrow
@@ -129,7 +128,7 @@ class EntityManager
 
         // Notifying systems that an entity has been killed
         auto entity = Entity(this, id);
-        this.m_systemManager.onEntityKilled(entity, this.m_componentMasks[index]);
+        // TODO: this.m_systemManager.onEntityKilled(entity, this.m_componentMasks[index]);
 
         this.m_componentMasks[index][] = false;
     }
@@ -139,11 +138,11 @@ class EntityManager
      * Systems are notified that a specific entity has been activated.
      */
     @nogc
-    public void activateEntity(ref Entity entity) nothrow
+    public void activateEntity(in ref Id id) nothrow
     {
-        assert(entity.isValid, "Entity is invalid");
+        assert(id.isValid, "Entity is invalid");
 
-        this.m_systemManager.onEntityActivated(entity, this.m_componentMasks[entity.id.index]);
+        // this.m_systemManager.onEntityActivated(entity, this.m_componentMasks[entity.id.index]);
     }
 
     /**
