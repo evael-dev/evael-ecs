@@ -5,9 +5,6 @@ import evael.containers.array;
 interface IComponentPool
 {
     @nogc
-    public void dispose();
-
-    @nogc
     public void expand();
 
     @nogc
@@ -16,21 +13,18 @@ interface IComponentPool
 
 class ComponentPool(T) : IComponentPool
 {
-    private Array!(T) m_components;
-
+    private Array!T m_components;
+    
     @nogc
     public this(in size_t poolSize)
     {
-        while (this.m_components.length < poolSize)
-        {
-            this.expand();
-        }
+        this.m_components = Array!T(poolSize, T());
     }
 
     @nogc
-    public void dispose()
+    public ~this()
     {
-        this.m_components.free();
+        this.m_components.dispose();
     }
 
     @nogc
@@ -49,7 +43,7 @@ class ComponentPool(T) : IComponentPool
     {
         assert(index < this.m_components.length);
 
-        return this.m_components[index].data;
+        return &this.m_components[index];
     }
 
     /**
@@ -72,7 +66,7 @@ class ComponentPool(T) : IComponentPool
     @nogc
     public void expand()
     {
-        this.m_components.insertBack(T());
+        this.m_components.insert(T());
     }
 
     @nogc

@@ -12,15 +12,16 @@ struct EventCounter(Event)
 {
     private GlobalEventCounter globalEventCounter;
 
+    /// It's public just because we need to reset it to -1 for utests!
+    /// TODO: we shouldn't have to do this...
+    public static uint counter = -1;
+
     @nogc
     public static uint getId() nothrow
     {
-        static uint counter = -1;
-
         if (counter == -1)
         {
-            counter = globalEventCounter.counter;
-            globalEventCounter.counter++;
+            counter = globalEventCounter.counter++;
         }
 
         return counter;

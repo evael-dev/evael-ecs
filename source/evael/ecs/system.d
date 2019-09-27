@@ -1,9 +1,6 @@
 module evael.ecs.system;
 
 import evael.ecs.entity;
-//import decs.Component;
-import evael.ecs.event_manager;
-import evael.ecs.entity_manager;
 
 import evael.containers.array;
 
@@ -17,9 +14,6 @@ abstract class System
         Automatic,
         Manual
     }
-
-    protected EntityManager m_entityManager;
-    protected EventManager m_eventManager;
 
     protected Array!Entity m_entities;
 
@@ -51,7 +45,7 @@ abstract class System
     public abstract void update(in float deltaTime);
 
     /**
-     * Registers current system's component if they are not known by the entity manager.
+     * Registers current system's components if they are not known by the entity manager.
      * Note: Only useful when a ComponentFilters mixin is used in the user system.
      */
     @nogc
@@ -64,6 +58,7 @@ abstract class System
      * Returns a static array containing components ids.
      * Note: Only useful when a ComponentFilters mixin is used in the user system.
      */
+    @nogc
     @property
     public int[] componentsFilter()
     {
@@ -102,14 +97,9 @@ abstract class System
             return this.m_updatePolicy;
         }
 
-        public void entityManager(EntityManager value)
+        public void updatePolicy(in UpdatePolicy value)
         {
-            this.m_entityManager = value;
-        }
-
-        public void eventManager(EventManager value)
-        {
-            this.m_eventManager = value;
+            this.m_updatePolicy = value;
         }
     }
 }

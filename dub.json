@@ -1,6 +1,6 @@
 {
 	"name": "evael",
-	"description": "Evael engine Entity-Component-System lib.",
+	"description": "Evael engine entity-component-system lib.",
 	"copyright": "Copyright 2015-2019, Robert Georges",
 	"license": "BSL-1.0",
 	"authors": ["Robert Georges"],

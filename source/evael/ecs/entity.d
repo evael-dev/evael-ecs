@@ -18,58 +18,36 @@ struct Entity
      * Adds component for this entity.
      */
     @nogc
-    public void add(C)(C component) nothrow
+    public void add(C)(C component)
     {
         assert(this.m_em !is null);
+        assert(this.m_id.isValid);
 
-        this.m_em.addComponent!C(this.m_id, component);
+        this.m_em.addComponent!C(this, component);
     }
 
     /**
      * Returns component of this entity.
      */
     @nogc
-    public C* get(C)() nothrow
+    public C* get(C)()
     {
         assert(this.m_em !is null);
+        assert(this.m_id.isValid);
 
-        return this.m_em.getComponent!C(this.m_id);
+        return this.m_em.getComponent!C(this);
     }
 
     /**
      * Checks if this entity own a specific component.
      */
     @nogc
-    public bool has(C)() nothrow
+    public bool has(C)()
     {
         assert(this.m_em !is null);
+        assert(this.m_id.isValid);
 
-        return this.m_em.hasComponent!C(this.m_id);
-    }
-
-    /**
-     * Kills the entity.
-     */
-    @nogc
-    public void kill() nothrow
-    {
-        assert(this.m_em !is null);
-    
-        this.m_em.killEntity(this.m_id);
-        this.m_em = null;
-
-        this.m_id.isValid = false;
-    }
-
-    /**
-     * Notifies all systems that current entity is now alive.
-     */
-    @nogc
-    public void activate() nothrow
-    {
-        assert(this.m_em !is null);
-
-        this.m_em.activateEntity(this.m_id);
+        return this.m_em.hasComponent!C(this);
     }
 
     /**

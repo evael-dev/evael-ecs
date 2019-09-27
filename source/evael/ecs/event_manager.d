@@ -24,11 +24,11 @@ class EventManager
      * EventManager destructor.
      */
     @nogc
-    public void dispose()
+    public ~this()
     {
-        foreach (i, ref receiver; this.m_receivers)
+        foreach (ref receiverArray; this.m_receivers)
         {
-            receiver.dispose();
+            receiverArray.dispose();
         }
 
         this.m_receivers.dispose();
@@ -62,8 +62,8 @@ class EventManager
 
     /**
      * Notifies to all receivers a new event.
+     * Can't be @nogc because we don't wanna force user to use @nogc.
      */
-    @nogc
     public void emit(Event)(Event event)
     {
         immutable eventId = EventCounter!(Event).getId();

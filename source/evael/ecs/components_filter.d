@@ -5,22 +5,13 @@ module evael.ecs.components_filter;
  */
 mixin template ComponentsFilter(Components...)
 {
+    public Components components;
+    
+    /// Indicates if the componentsFilter array have already been initialized.
+    private bool m_componentsFilterInitialized;
+
     /// Array containing unique ids of all the components passed to the mixin template.
     private int[Components.length] m_componentsFilter;
-
-    /**
-     * Registers current system's component if they are not know by the entity manager.
-     */
-    @nogc
-    public override void registerComponents()
-    {
-        assert(this.m_entityManager !is null);
-
-        foreach (component; Components)
-        {
-            this.m_entityManager.checkAndAccomodateComponent!component();
-        }
-    }
 
     /**
      * Returns a static array containing components ids.
@@ -32,9 +23,7 @@ mixin template ComponentsFilter(Components...)
     @property
     public override int[] componentsFilter()
     {
-        static bool initialized = false;
-
-        if (!initialized)
+        if (!this.m_componentsFilterInitialized)
         {
             import evael.ecs.component_counter;
 
@@ -43,7 +32,7 @@ mixin template ComponentsFilter(Components...)
                 this.m_componentsFilter[index] = ComponentCounter!(component).getId();
             }
 
-            initialized = true;
+            this.m_componentsFilterInitialized = true;
         }
 
         return this.m_componentsFilter;

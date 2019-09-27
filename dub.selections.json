@@ -1,6 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"dlib": "0.16.0",
 		"evael-lib": "0.0.1",
 		"unit-threaded": "0.10.3"
 	}

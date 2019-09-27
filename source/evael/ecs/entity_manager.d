@@ -2,6 +2,7 @@ module evael.ecs.entity_manager;
 
 import evael.ecs.entity;
 import evael.ecs.component_pool;
+import evael.ecs.component_counter;
 
 import evael.containers.array;
 
@@ -15,33 +16,38 @@ class EntityManager
     private Array!IComponentPool m_components;
 
     /// [ Entity1[component1, component2...] , Entity2[component1, component2...] ...]
-    private Array!BoolArray m_componentMasks;
+    private Array!BoolArray m_componentsMasks;
 
     private Array!size_t m_freeIds;
     private size_t m_currentIndex;
 
+    /**
+     * EntityManager constructor.
+     */
     @nogc
     public this() nothrow
     {
         this.m_components = Array!IComponentPool(COMPONENTS_POOL_SIZE);
-        this.m_components.dispose();
     }
 
+    /**
+     * EntityManager destructor.
+     */
     @nogc
     public ~this()
     {
-        foreach (i, poolObject; this.m_components)
+        foreach (poolObject; this.m_components)
         {
             Delete(poolObject);
         }
 
-        foreach (i, maskArray; this.m_componentMasks)
+        foreach (i, maskArray; this.m_componentsMasks)
         {
             maskArray.dispose();
         }
 
         this.m_components.dispose();
-        this.m_componentMasks.dispose();
+        this.m_componentsMasks.dispose();
         this.m_freeIds.dispose();
     }
 
@@ -53,7 +59,7 @@ class EntityManager
     {
         auto id = Id();
 
-        if(this.m_freeIds.empty)
+        if (this.m_freeIds.empty)
         {
             id.index = this.m_currentIndex;
             this.initializeEntityData(id.index);
@@ -70,79 +76,95 @@ class EntityManager
     /**
      * Adds a component for an entity.
      * Params:
-     *		id :
+     *		entity :
      *		component :
      */
     @nogc
-    public void addComponent(C)(in ref Id id, C component) nothrow
+    public void addComponent(C)(in ref Entity entity, C component)
     {
-        immutable componentId = this.checkAndAccomodateComponent!C();
+        immutable componentId = this.checkAndRegisterComponent!C();
 
         // Adding the component in the pool
         auto pool = cast(ComponentPool!C) this.m_components[componentId];
 
         assert(pool !is null, "pool is null for component " ~ C.stringof);
 
-        pool.set(id.index, component);
+        pool.set(entity.id.index, component);
 
         // Set the mask
-        // TODO : dlib.array bug ? I need to type .data before accessing mask
-        this.m_componentMasks.data[id.index][componentId] = true;
+        this.m_componentsMasks[entity.id.index][componentId] = true;
     }
 
     /**
      * Retrieves a specific component of an entity.
      * Params:
-     *		id :
+     *		entity :
      */
     @nogc
-    public C* getComponent(C)(in ref Id id) nothrow
+    public C* getComponent(C)(in ref Entity entity)
     {
-        immutable componentId = this.checkAndAccomodateComponent!C();
+        immutable componentId = this.checkAndRegisterComponent!C();
 
         auto pool = cast(ComponentPool!C) this.m_components[componentId];
-        return pool.get(id.index);
+        return pool.get(entity.id.index);
     }
 
     /**
      * Checks if an entity owns a specific component.
+     * Params:
+     *		entity :
      */
     @nogc
-    public bool hasComponent(C)(in ref Id id) nothrow
+    public bool hasComponent(C)(in ref Entity entity)
     {
-        immutable componentId = this.checkAndAccomodateComponent!C();
+        immutable componentId = this.checkAndRegisterComponent!C();
 
-        return this.m_componentMasks[id.index][componentId] != false;
+        return this.m_componentsMasks[entity.id.index][componentId] != false;
+    }
+
+    /**
+     * Checks if a component is already known.
+     */
+    @nogc
+    public int checkAndRegisterComponent(C)()
+    {
+        immutable componentId = ComponentCounter!(C).getId();
+
+        if (this.m_components.length <= componentId)
+        {
+            // Not know yet, we register it
+            this.registerComponent!C(componentId);
+        }
+
+        return componentId;
     }
 
     /**
      * Kills an entity.
-     * World is notified that the specified has been killed.
+     * Params:
+     *		entity :
      */
     @nogc
-    public void killEntity(in ref Id id) nothrow
+    public void killEntity(ref Entity entity) nothrow
     {
-        immutable index = id.index;
+        immutable index = entity.id.index;
 
-        this.m_freeIds.insert(id.index);
+        entity.invalidate();
 
-        // Notifying systems that an entity has been killed
-        auto entity = Entity(this, id);
-        // TODO: this.m_systemManager.onEntityKilled(entity, this.m_componentMasks[index]);
+        this.m_componentsMasks[index][] = false;
 
-        this.m_componentMasks[index][] = false;
+        this.m_freeIds.insert(index);
     }
 
     /**
-     * Activates an entity.
-     * Systems are notified that a specific entity has been activated.
+     * Returns components masks of an entity.
+     * Params:
+     *		entity :
      */
     @nogc
-    public void activateEntity(in ref Id id) nothrow
+    package bool[] getEntityComponentsMasks(in ref Entity entity) nothrow
     {
-        assert(id.isValid, "Entity is invalid");
-
-        // this.m_systemManager.onEntityActivated(entity, this.m_componentMasks[entity.id.index]);
+        return this.m_componentsMasks[entity.id.index][];
     }
 
     /**
@@ -158,7 +180,7 @@ class EntityManager
         if (index >= this.m_currentIndex)
         {
             // Expand component mask array
-            if (this.m_componentMasks.length < nextIndex)
+            if (this.m_componentsMasks.length < nextIndex)
             {
                 auto mask = BoolArray();
 
@@ -167,7 +189,7 @@ class EntityManager
                     mask.insert(false);
                 }
 
-                this.m_componentMasks.insert(mask);
+                this.m_componentsMasks.insert(mask);
             }
 
             // Expand all component arrays
@@ -181,5 +203,27 @@ class EntityManager
         }
 
         this.m_currentIndex = nextIndex;
+    }
+
+    /**
+     * Registers a component.
+     * Params:
+     *		componentId :
+     */
+    @nogc
+    private void registerComponent(C)(in int componentId)
+    {
+        // Expanding component pool
+        auto componentPool = New!(ComponentPool!C)(this.m_currentIndex);
+        this.m_components.insert(componentPool);
+
+        // Expanding all components masks to include a new component
+        if (this.m_componentsMasks.length > 0 && this.m_componentsMasks[0].length <= componentId)
+        {
+            foreach (ref componentMask; this.m_componentsMasks)
+            {
+                componentMask.insert(false);
+            }
+        }
     }
 }
