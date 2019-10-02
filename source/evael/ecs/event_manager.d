@@ -3,9 +3,9 @@ module evael.ecs.event_manager;
 import evael.ecs.event_receiver;
 import evael.ecs.event_counter;
 
-import evael.containers.array;
+import evael.lib.containers.array;
 
-class EventManager
+class EventManager : NoGCClass
 {
     private alias ReceiverArray = Array!IEventReceiver;
 

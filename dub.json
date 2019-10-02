@@ -18,6 +18,7 @@
             "name": "unittest",
             "targetType": "executable",
 			"excludedSourceFiles": ["source/app.d"],
+			"mainSourceFile": "tests/main.d",
 			"sourcePaths": ["tests"],
             "dependencies": {
                 "unit-threaded": "*"

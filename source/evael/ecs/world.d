@@ -6,9 +6,9 @@ import evael.ecs.event_manager;
 import evael.ecs.system;
 import evael.ecs.system_manager;
 
-import evael.memory;
+import evael.lib.containers.array;
 
-class World
+class World : NoGCClass
 {
     private EntityManager m_entityManager;
     private SystemManager m_systemManager;
@@ -77,6 +77,15 @@ class World
     }
 
     /**
+     * Returns a range containing entities with the specified components.
+     */
+    @nogc
+    public Array!Entity getEntitiesWith(Components...)()
+    {
+        return this.m_entityManager.getEntitiesWith!Components();
+    }
+
+    /**
      * Adds a system to the world.
      * Params:
      *      system : system to add
@@ -84,6 +93,7 @@ class World
     @nogc
     public void addSystem(System system)
     {
+        system.world = this;
         this.m_systemManager.add(system);
     }
 

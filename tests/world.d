@@ -78,12 +78,39 @@ unittest
     system.entityKilled.shouldEqual(entity);
 }
 
+@Name("World returns entities that owns a specific component")
+unittest
+{
+    auto world = new World();
+    auto entity = world.createEntity();
+    entity.add(Position(1, 2));
+
+    auto entities = world.getEntitiesWith!Position();
+
+    entities.length.shouldEqual(1);
+    entities[0].shouldEqual(entity);
+
+    entities = world.getEntitiesWith!(Position, Level)();
+    entities.length.shouldEqual(0);
+
+    entity.add(Level(5));
+
+    entities = world.getEntitiesWith!(Position, Level)();
+    entities.length.shouldEqual(1);
+    entities[0].shouldEqual(entity);
+}
+
 /**
  * Fixtures
  */
 struct Position
 {
     public int x, y;
+}
+
+struct Level
+{
+    int lvl;
 }
 
 class MySystem : System

@@ -2,7 +2,7 @@ module tests.system_manager;
 
 import unit_threaded;
 import evael.ecs;
-import evael.containers.array;
+import evael.lib.containers.array;
 
 @Setup
 void setup()

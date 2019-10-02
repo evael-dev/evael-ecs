@@ -25,3 +25,5 @@ dub.selections.json
 *.lst
 
 source/app.d
+.vscode
+.history

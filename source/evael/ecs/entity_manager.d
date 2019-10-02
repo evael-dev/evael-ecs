@@ -4,11 +4,11 @@ import evael.ecs.entity;
 import evael.ecs.component_pool;
 import evael.ecs.component_counter;
 
-import evael.containers.array;
+import evael.lib.containers.array;
 
 alias BoolArray = Array!bool;
 
-class EntityManager
+class EntityManager : NoGCClass
 {
     enum COMPONENTS_POOL_SIZE = 50;
 
@@ -36,11 +36,6 @@ class EntityManager
     @nogc
     public ~this()
     {
-        foreach (poolObject; this.m_components)
-        {
-            Delete(poolObject);
-        }
-
         foreach (i, maskArray; this.m_componentsMasks)
         {
             maskArray.dispose();
@@ -157,12 +152,49 @@ class EntityManager
     }
 
     /**
+     * Returns a range containing entities with the specified components.
+     */
+    @nogc
+    public Array!Entity getEntitiesWith(Components...)()
+    {
+        Array!Entity entities;
+
+        if (this.m_components.length == 0)
+        {
+            return entities;
+        }
+
+        import std.bitmanip : BitArray;
+
+        auto askedComponentsMask = this.getComponentsMask!Components();
+        
+        for (size_t i = 0; i < this.m_currentIndex; i++)
+        {
+            auto entityComponentsMask = this.m_componentsMasks[i];
+            
+            auto combinedMask = BoolArray(askedComponentsMask.length, false);
+            combinedMask.data[] = entityComponentsMask.data[] & askedComponentsMask.data[];
+
+            if (combinedMask == askedComponentsMask)
+            {
+                entities.insert(Entity(this, Id(i)));
+            }
+
+            combinedMask.dispose();
+        }
+
+        askedComponentsMask.dispose();
+
+        return entities;
+    }
+
+    /**
      * Returns components masks of an entity.
      * Params:
      *		entity :
      */
     @nogc
-    package bool[] getEntityComponentsMasks(in ref Entity entity) nothrow
+    public bool[] getEntityComponentsMasks(in ref Entity entity) nothrow
     {
         return this.m_componentsMasks[entity.id.index][];
     }
@@ -182,13 +214,7 @@ class EntityManager
             // Expand component mask array
             if (this.m_componentsMasks.length < nextIndex)
             {
-                auto mask = BoolArray();
-
-                for (int i = 0; i < this.m_components.length(); i++)
-                {
-                    mask.insert(false);
-                }
-
+                auto mask = BoolArray(this.m_components.length(), false);
                 this.m_componentsMasks.insert(mask);
             }
 
@@ -225,5 +251,29 @@ class EntityManager
                 componentMask.insert(false);
             }
         }
+    }
+
+    /**
+     * Returns a mask with the specified components.
+     */
+    public BoolArray getComponentsMask(Components...)()
+    {
+        auto mask = BoolArray(this.m_components.length(), false);
+
+        foreach (component; Components)
+        {
+            immutable componentId = ComponentCounter!(component).getId();
+
+            // We check if that component is known
+            if(this.m_components.length <= componentId)
+            {
+                // Nop, register it
+                this.registerComponent!component(componentId);
+                mask.insert(true);
+            }
+            else mask[componentId] = true;
+        }
+
+        return mask;
     }
 }

@@ -4,9 +4,9 @@ import std.algorithm;
 
 import evael.ecs.system;
 import evael.ecs.entity;
-import evael.containers.array;
+import evael.lib.containers.array;
 
-class SystemManager
+class SystemManager : NoGCClass
 {
 	private Array!System m_systems;
 
@@ -23,7 +23,7 @@ class SystemManager
 
 	public void update(in float deltaTime)
 	{
-		// TODO: build a array with automatic update systems ?
+		// TODO: build an array that contains only systems with Automatic update policy ?
 		foreach (system; this.m_systems)
 		{
 			if (system.updatePolicy == System.UpdatePolicy.Automatic)

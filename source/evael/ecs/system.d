@@ -1,10 +1,11 @@
 module evael.ecs.system;
 
 import evael.ecs.entity;
+import evael.ecs.world;
 
-import evael.containers.array;
+import evael.lib.containers.array;
 
-abstract class System
+abstract class System : NoGCClass
 {
     /**
      * Defines if update() function will be automatically called by the system manager or manually by the user.
@@ -20,6 +21,8 @@ abstract class System
     protected UpdatePolicy m_updatePolicy;
 
     protected int[] m_componentsFilter;
+
+    protected World m_world;
 
     /**
      * System constructor.
@@ -100,6 +103,11 @@ abstract class System
         public void updatePolicy(in UpdatePolicy value)
         {
             this.m_updatePolicy = value;
+        }
+
+        package void world(World world)
+        {
+            this.m_world = world;
         }
     }
 }

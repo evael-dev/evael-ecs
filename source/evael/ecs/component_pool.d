@@ -1,8 +1,8 @@
 module evael.ecs.component_pool;
 
-import evael.containers.array;
+import evael.lib.containers.array;
 
-interface IComponentPool
+interface IComponentPool : NoGCInterface
 {
     @nogc
     public void expand();
@@ -11,7 +11,7 @@ interface IComponentPool
     public size_t length();
 }
 
-class ComponentPool(T) : IComponentPool
+class ComponentPool(T) : NoGCClass, IComponentPool
 {
     private Array!T m_components;
     

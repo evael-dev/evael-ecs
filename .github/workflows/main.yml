@@ -1,4 +1,4 @@
-name: DLang
+name: CI
 
 on: [push]
 
@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: mihails-strasuns/setup-dlang@v0
-    - name: Build
-      run: dub build
-    - name: Run tests
-      run: dub test
+    - name: Run tests for x64
+      run: dub test -- -s
+    - name: Run tests for x86
+      run: dub test --arch=x86 -- -s

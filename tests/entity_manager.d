@@ -10,7 +10,7 @@ void setup()
     GlobalEventCounter.counter = 0;
     ComponentCounter!Position.counter = -1;
 }
-
+/*
 @Name("EntityManager creates valid entity")
 unittest
 {
@@ -28,7 +28,7 @@ unittest
 
     em.addComponent!Position(entity, Position(5, 6));
     (*em.getComponent!Position(entity)).shouldEqual(Position(5, 6));
-}
+}*/
 
 @Name("EntityManager returns component pointer from a specific entity")
 unittest
@@ -43,7 +43,7 @@ unittest
     ptr.y = 1338;
     (*em.getComponent!Position(entity)).shouldEqual(Position(1337, 1338));
 }
-
+/*
 @Name("EntityManager kills entity")
 unittest
 {
@@ -68,7 +68,43 @@ unittest
     entity.id.index.shouldEqual(entity2.id.index);
 }
 
+@Name("EntityManager returns a mask from a component list")
+unittest
+{
+    auto em = new EntityManager();
+    auto mask = em.getComponentsMask!Position();
+
+    mask[].shouldEqual([true]);
+}
+
+@Name("EntityManager returns entities that owns a specific component")
+unittest
+{
+    auto em = new EntityManager();
+    auto entity = em.createEntity();
+    entity.add(Position(1, 2));
+
+    auto entities = em.getEntitiesWith!Position();
+
+    entities.length.shouldEqual(1);
+    entities[0].shouldEqual(entity);
+
+    entities = em.getEntitiesWith!(Position, Level)();
+    entities.length.shouldEqual(0);
+
+    entity.add(Level(5));
+
+    entities = em.getEntitiesWith!(Position, Level)();
+    entities.length.shouldEqual(1);
+    entities[0].shouldEqual(entity);
+}
+*/
 struct Position
 {
     int x, y;
+}
+
+struct Level
+{
+    int lvl;
 }
