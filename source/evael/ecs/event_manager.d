@@ -61,7 +61,7 @@ class EventManager : NoGCClass
     }
 
     /**
-     * Notifies to all receivers a new event.
+     * Sends event to receivers.
      * Can't be @nogc because we don't wanna force user to use @nogc.
      */
     public void emit(Event)(Event event)

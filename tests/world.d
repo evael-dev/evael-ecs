@@ -100,6 +100,19 @@ unittest
     entities[0].shouldEqual(entity);
 }
 
+@Name("World emits event")
+unittest
+{
+    auto world = new World();
+    auto system = new MySystem();
+
+    world.subscribeReceiverToEvent!MovementEvent(system);
+    system.movementEventReceived.shouldEqual(false);
+
+    world.emitEvent(MovementEvent(1, 2));
+    system.movementEventReceived.shouldEqual(true);
+}
+
 /**
  * Fixtures
  */
@@ -113,11 +126,17 @@ struct Level
     int lvl;
 }
 
-class MySystem : System
+struct MovementEvent
+{
+    public int newX, newY;
+}
+
+class MySystem : System, EventReceiver!(MovementEvent)
 {
     mixin ComponentsFilter!(Position);
     
-    public bool updateCalled = true;
+    public bool updateCalled = false;
+    public bool movementEventReceived = false;
     public Entity entityActivated;
     public Entity entityKilled;
 
@@ -134,5 +153,10 @@ class MySystem : System
     public override void onEntityKilled(ref Entity entity)
     {
         this.entityKilled = entity;
+    }
+
+    public void receive(ref MovementEvent event)
+    {
+        this.movementEventReceived = true;
     }
 }

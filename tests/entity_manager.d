@@ -10,7 +10,7 @@ void setup()
     GlobalEventCounter.counter = 0;
     ComponentCounter!Position.counter = -1;
 }
-/*
+
 @Name("EntityManager creates valid entity")
 unittest
 {
@@ -28,7 +28,7 @@ unittest
 
     em.addComponent!Position(entity, Position(5, 6));
     (*em.getComponent!Position(entity)).shouldEqual(Position(5, 6));
-}*/
+}
 
 @Name("EntityManager returns component pointer from a specific entity")
 unittest
@@ -43,7 +43,7 @@ unittest
     ptr.y = 1338;
     (*em.getComponent!Position(entity)).shouldEqual(Position(1337, 1338));
 }
-/*
+
 @Name("EntityManager kills entity")
 unittest
 {
@@ -98,7 +98,7 @@ unittest
     entities.length.shouldEqual(1);
     entities[0].shouldEqual(entity);
 }
-*/
+
 struct Position
 {
     int x, y;

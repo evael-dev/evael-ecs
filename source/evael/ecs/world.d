@@ -3,6 +3,7 @@ module evael.ecs.world;
 import evael.ecs.entity_manager; 
 import evael.ecs.entity; 
 import evael.ecs.event_manager;
+import evael.ecs.event_receiver;
 import evael.ecs.system;
 import evael.ecs.system_manager;
 
@@ -57,6 +58,8 @@ class World : NoGCClass
 
     /**
      * Kills and notifies all systems that an entity has been killed.
+     * Params:
+     *      entity : entity
      */
     public void killEntity(ref Entity entity)
     {
@@ -68,12 +71,24 @@ class World : NoGCClass
 
     /**
      * Notifies all systems that an entity is now alive.
+     * Params:
+     *      entity : entity
      */
     public void activateEntity(ref Entity entity)
     {
         auto componentsMasks = this.m_entityManager.getEntityComponentsMasks(entity);
 
         this.m_systemManager.onEntityActivated(entity, componentsMasks);
+    }
+
+    /**
+     * Emits an event to subscribers.
+     * Params:
+     *      event : event
+     */
+    public void emitEvent(Event)(Event event)
+    {
+        this.m_eventManager.emit(event);
     }
 
     /**
@@ -98,13 +113,13 @@ class World : NoGCClass
     }
 
     /**
-     * Subscribes a system to a specific event.
+     * Subscribes a receiver to a specific event.
      * Params:
-     *      system : system to subscribes
+     *      receiver : receiver to subscribes
      */
     @nogc
-    public void subscribeToEvent(Event)(System system)
+    public void subscribeReceiverToEvent(Event)(EventReceiver!Event receiver)
     {
-        this.m_eventManager.subscribe!Event(system);
+        this.m_eventManager.subscribe!Event(receiver);
     }
 }

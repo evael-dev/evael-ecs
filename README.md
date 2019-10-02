@@ -177,7 +177,7 @@ void main()
     auto cameraSys = New!CameraSystem();
 
     world.addSystem(cameraSys);
-    world.subscribeToEvent!MovementEvent(cameraSys);
+    world.subscribeReceiverToEvent!MovementEvent(cameraSys);
 }
 ```
 
