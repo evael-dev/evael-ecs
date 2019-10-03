@@ -21,9 +21,9 @@ class World : NoGCClass
     @nogc
     public this()
     {
-        this.m_entityManager = New!EntityManager();
-        this.m_systemManager = New!SystemManager();
-        this.m_eventManager = New!EventManager();
+        this.m_entityManager = MemoryHelper.create!EntityManager();
+        this.m_systemManager = MemoryHelper.create!SystemManager();
+        this.m_eventManager = MemoryHelper.create!EventManager();
     }
 
     /**
@@ -32,9 +32,9 @@ class World : NoGCClass
     @nogc
     public ~this()
     {
-        Delete(this.m_entityManager);
-        Delete(this.m_systemManager);
-        Delete(this.m_eventManager);
+        MemoryHelper.dispose(this.m_entityManager);
+        MemoryHelper.dispose(this.m_systemManager);
+        MemoryHelper.dispose(this.m_eventManager);
     }
 
     /**

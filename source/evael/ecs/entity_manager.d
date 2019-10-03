@@ -240,7 +240,7 @@ class EntityManager : NoGCClass
     private void registerComponent(C)(in int componentId)
     {
         // Expanding component pool
-        auto componentPool = New!(ComponentPool!C)(this.m_currentIndex);
+        auto componentPool = MemoryHelper.create!(ComponentPool!C)(this.m_currentIndex);
         this.m_components.insert(componentPool);
 
         // Expanding all components masks to include a new component

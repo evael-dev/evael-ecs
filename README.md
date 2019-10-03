@@ -1,7 +1,21 @@
-# evael-ecs
+<!-- LOGO -->
+<p align="center">
+  <h2 align="center">evael-ecs</h2>
+  <p align="center">
+    <a href="https://github.com/evael-dev/evael-lib/actions">
+        <img src="https://github.com/evael-dev/evael-lib/workflows/CI/badge.svg">
+    </a>
+    <a href="https://codecov.io/gh/evael-dev/evael-lib">
+        <img src="https://codecov.io/gh/evael-dev/evael-lib/branch/master/graph/badge.svg" />
+    </a>
+    <img src="https://img.shields.io/github/license/evael-dev/evael-lib">
+    <br />
+  </p>
+</p>
 
+- - -
 
-**evael-ecs** is the entity-component-system used by the **evael** engine. It's supposed to be fully **@nogc** and used with the **evael-lib**.
+**evael-ecs** is the entity-component-system used by the **Evael** engine. It's supposed to be fully **@nogc**.
 
 It's inspired by the following projects : 
 
@@ -9,14 +23,12 @@ It's inspired by the following projects :
 * https://github.com/jzhu98/star-entity   => D ECS
 * https://github.com/claudemr/entitysysd  => D ECS
 
-## How to build
+## Build
 
 You have to use [dub](https://code.dlang.org/download) to build the project.
-
 Add this project as a dependency to your **dub.json**: dub add evael-ecs
 
-## How to use
-
+## Getting Started
 ### World
 
 World is the class that will handle everything for you. You should use it to add systems, create entities and subscribe to events.
@@ -28,16 +40,15 @@ import evael.lib;
 
 void main()
 {
-    auto world = New!World();
+    auto world = MemoryHelper.create!World();
 
     while(game)
     {
         world.update(dt);
     }
     
-    Delete(world);
+    MemoryHelper.dispose(world);
 }
-
 ```
 
 ### Entities
@@ -100,7 +111,7 @@ class MovementSystem : System
 
 There are 2 ways to query entities from your system : 
 
-* 1 => Using entity manager **entities!(components...)** method
+* 1 => Using entity manager **getEntitiesWith!(components...)** method
 * 2 => Using the ComponentsFilter mixin template **mixin ComponentsFilter!(components...);**
 
 If you provide a components filter, when an entity is activated, it will be automatically added to the systems whose filters match her components.
@@ -114,7 +125,7 @@ class MovementSystem : System
     public void update(in float deltaTime)
     {
         // option 1
-        auto entities = this.m_entityManager.entities!(PositionComponent);
+        auto entities = this.m_entityManager.getEntitiesWith!(PositionComponent);
 
         // option 2 (should be more efficient)
         foreach (entity; this.m_entities)
@@ -173,8 +184,8 @@ class CameraSystem : Receiver!MovementEvent
 // Subscribe to events
 void main()
 {
-    auto world = New!World();
-    auto cameraSys = New!CameraSystem();
+    auto world = MemoryHelper.create!World();
+    auto cameraSys = MemoryHelper.create!CameraSystem();
 
     world.addSystem(cameraSys);
     world.subscribeReceiverToEvent!MovementEvent(cameraSys);
