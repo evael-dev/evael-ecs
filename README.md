@@ -3,12 +3,12 @@
   <h2 align="center">evael-ecs</h2>
   <p align="center">
     <a href="https://github.com/evael-dev/evael-lib/actions">
-        <img src="https://github.com/evael-dev/evael-lib/workflows/CI/badge.svg">
+        <img src="https://github.com/evael-dev/evael-lib/workflows/Tests/badge.svg">
     </a>
-    <a href="https://codecov.io/gh/evael-dev/evael-lib">
-        <img src="https://codecov.io/gh/evael-dev/evael-lib/branch/master/graph/badge.svg" />
+    <a href="https://codecov.io/gh/evael-dev/evael-ecs">
+        <img src="https://codecov.io/gh/evael-dev/evael-ecs/branch/master/graph/badge.svg" />
     </a>
-    <img src="https://img.shields.io/github/license/evael-dev/evael-lib">
+    <img src="https://img.shields.io/github/license/evael-dev/evael-ecs">
     <br />
   </p>
 </p>
@@ -26,7 +26,8 @@ It's inspired by the following projects :
 ## Build
 
 You have to use [dub](https://code.dlang.org/download) to build the project.
-Add this project as a dependency to your **dub.json**: dub add evael-ecs
+
+Add this project as a dependency to your **dub.json**: `dub add evael-ecs`
 
 ## Getting Started
 ### World
