@@ -2,8 +2,8 @@
 <p align="center">
   <h2 align="center">evael-ecs</h2>
   <p align="center">
-    <a href="https://github.com/evael-dev/evael-lib/actions">
-        <img src="https://github.com/evael-dev/evael-lib/workflows/Tests/badge.svg">
+    <a href="https://github.com/evael-dev/evael-ecs/actions">
+        <img src="https://github.com/evael-dev/evael-ecs/workflows/Tests/badge.svg">
     </a>
     <a href="https://codecov.io/gh/evael-dev/evael-ecs">
         <img src="https://codecov.io/gh/evael-dev/evael-ecs/branch/master/graph/badge.svg" />
