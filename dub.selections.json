@@ -1,0 +1,10 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"dlib": "0.16.0",
+		"evael-lib": "0.0.1",
+		"mir-linux-kernel": "1.0.1",
+		"tanya": "0.16.1",
+		"unit-threaded": "0.10.3"
+	}
+}

@@ -19,6 +19,11 @@
 docs.json
 __dummy.html
 docs/
+dub.selections.json
 
 # Code coverage
 *.lst
+
+source/app.d
+.vscode
+.history

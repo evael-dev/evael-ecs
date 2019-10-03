@@ -1,0 +1,21 @@
+name: Coverage
+on:
+  push:
+    branches:
+    - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: mihails-strasuns/setup-dlang@v0
+
+    - name: Generate coverage files
+      run: dub test -b unittest-cov -- -s
+  
+    - name: Upload coverage to Codecov  
+      uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        flags: unittests
+        name: codecov-umbrella 
