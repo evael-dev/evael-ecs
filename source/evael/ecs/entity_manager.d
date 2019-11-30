@@ -6,6 +6,8 @@ import evael.ecs.component_counter;
 
 import evael.lib.containers.array;
 
+import std.traits;
+
 alias BoolArray = Array!bool;
 
 class EntityManager : NoGCClass
@@ -82,7 +84,7 @@ class EntityManager : NoGCClass
         // Adding the component in the pool
         auto pool = cast(ComponentPool!C) this.m_components[componentId];
 
-        assert(pool !is null, "pool is null for component " ~ C.stringof);
+        assert(pool !is null, "pool is null for component " ~ __traits(identifier, C));
 
         pool.set(entity.id.index, component);
 
